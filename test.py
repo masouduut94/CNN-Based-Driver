@@ -1,9 +1,12 @@
 import time
-
 import cv2
 import mss
 import numpy as np
+from getkeys import *
 
+# TODO: catch errors with set overflow
+# TODO: Check this link -> https://nitratine.net/blog/post/how-to-make-hotkeys-in-python/
+# TODO: Handle the keycatcher
 
 def process_img(original_img):
     processed_img = cv2.cvtColor(original_img, cv2.COLOR_BGR2GRAY)
@@ -11,12 +14,17 @@ def process_img(original_img):
     return processed_img
 
 
+OTHER_KEYS = {27: 'esc', 112: 'p'}
+KEYS_META = {63232: 'up', 63233: 'down', 63234: 'left', 63235: 'right'}
+COMBINATIONS = {   }
+
 with mss.mss() as sct:
     # Part of the screen to capture
     monitor = {"top": 0, "left": 70, "width": 640, "height": 480}
+
     while True:
         last_time = time.time()
-
+        key_catcher = MockButton()
         # Get raw pixels from the screen, save it to a Numpy array
         screen = np.array(sct.grab(monitor))
         new_screen = process_img(original_img=screen)
@@ -24,9 +32,10 @@ with mss.mss() as sct:
         # Display the picture
         cv2.imshow("Window", new_screen)
 
-        print("Loop took {} seconds".format(time.time() - last_time))
+        #print("Loop took {} seconds".format(time.time() - last_time))
 
         # Press "q" to quit
-        if cv2.waitKey(25) & 0xFF == ord("q"):
+        if cv2.waitKey(0) & 0xFF == ord("q"):
             cv2.destroyAllWindows()
             break
+
