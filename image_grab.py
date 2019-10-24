@@ -1,5 +1,4 @@
-import time
-import cv2
+import os, time, cv2
 import numpy as np
 from grab_screen import grab_screen
 from getkeys import key_check
@@ -22,16 +21,13 @@ def roi(img, vertices):
     mask = np.zeros_like(img)
     cv2.fillPoly(mask, vertices, 255)
     masked = cv2.bitwise_and(img, mask)
+    masked = cv2.rectangle(img=masked, pt1=(250, 250),
+                           pt2=(550, 550), color=(0, 0, 0), thickness=-1)
+
     return masked
 
 
 def keys_to_output(keys):
-    '''
-    Convert keys to a ...multi-hot... array
-     0  1  2  3  4   5   6   7    8
-    [W, S, A, D, WA, WD, SA, SD, NOKEY] boolean values.
-    '''
-
     if ''.join(keys) in key_map:
         return key_map[''.join(keys)]
     return key_map['default']
@@ -40,24 +36,25 @@ def keys_to_output(keys):
 def process_img(original_img):
     processed_img = cv2.cvtColor(original_img, cv2.COLOR_BGR2GRAY)
     processed_img = cv2.Canny(processed_img, threshold1=200, threshold2=300)
-    vertices = np.array([[10, 500], [10, 300], [300, 200], [500, 200], [800, 300], [800, 500]], np.int32)
+    vertices = np.array([[0, 270], [0, 100], [150, 20], [340, 20], [480, 130], [480, 270]], np.int32)
     processed_img = roi(processed_img, [vertices])
     return processed_img
+
 
 while True:
     last_time = time.time()
     # key_catcher = MockButton()
     # Get raw pixels from the screen, save it to a Numpy array
-    screen = grab_screen(region=(0, 40, 640, 480))
+    screen = grab_screen(region=(0, 40, 800, 640))
     # screen = cv2.resize(screen, (480, 270))
     # run a color convert:
+    screen = cv2.resize(screen, (480, 270))
     screen = cv2.cvtColor(screen, cv2.COLOR_BGR2RGB)
     keys = key_check()
     output = keys_to_output(keys)
-    new_screen = process_img(original_img=screen)
 
     # Display the picture
-    cv2.imshow("Window", new_screen)
+    cv2.imshow("Window", screen)
     print('loop took {} seconds'.format(time.time() - last_time))
     k = cv2.waitKey(20)
     # Press "q" to quit
