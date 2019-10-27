@@ -97,7 +97,7 @@ def no_keys():
 
 
 model = google_net(WIDTH, HEIGHT, 3, LR, output=9)
-MODEL_NAME = 'pre_models/.data-00000-of-00001'
+MODEL_NAME = './model_1.model'
 model.load(MODEL_NAME)
 
 print('We have loaded a previous model!!!')

@@ -9,9 +9,9 @@ HEIGHT = 270
 LR = 1e-3
 EPOCHS = 30
 
-MODEL_NAME = ''
+MODEL_NAME = 'model_1.model'
 PREV_MODEL = 'pre_models/'
-LOAD_MODEL = False
+LOAD_MODEL = True
 
 model = googlenet(WIDTH, HEIGHT, 3, LR, output=9, model_name=MODEL_NAME)
 
